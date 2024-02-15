@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { GoogleMap, LoadScript, Marker, InfoWindow} from '@react-google-maps/api';
+import { useState, useEffect } from 'react';
+import { GoogleMap, LoadScript, Marker, InfoWindow } from '@react-google-maps/api';
 import PropTypes from 'prop-types';
 
 const containerStyle = {
@@ -15,6 +15,46 @@ const center = {
 const MapContainer = ({ records }) => {
   const [map, setMap] = useState(null);
   const [selectedRecord, setSelectedRecord] = useState(null);
+
+  useEffect(() => {
+    if (map && records.length > 1) {
+      const sortedRecords = [...records].sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+      const bounds = new window.google.maps.LatLngBounds();
+      const directionsService = new window.google.maps.DirectionsService();
+
+      const waypoints = sortedRecords.map(record => ({
+        location: new window.google.maps.LatLng(parseFloat(record.latitude), parseFloat(record.longitude)),
+        stopover: true
+      }));
+
+      const origin = waypoints.shift().location;
+      const destination = waypoints.pop().location;
+
+      directionsService.route(
+        {
+          origin,
+          destination,
+          waypoints,
+          travelMode: window.google.maps.TravelMode.DRIVING
+        },
+        (result, status) => {
+          if (status === window.google.maps.DirectionsStatus.OK) {
+            const path = result.routes[0].overview_path;
+            const polyline = new window.google.maps.Polyline({
+              path: path,
+              strokeColor: '#FF0000',
+              strokeOpacity: 0.8,
+              strokeWeight: 4,
+              map: map
+            });
+            map.fitBounds(bounds);
+          } else {
+            console.error('Directions request failed due to ' + status);
+          }
+        }
+      );
+    }
+  }, [map, records]);
 
   const onLoad = (map) => {
     setMap(map);
@@ -64,13 +104,12 @@ const MapContainer = ({ records }) => {
   );
 };
 
-
 MapContainer.propTypes = {
-    records: PropTypes.arrayOf(PropTypes.shape({
-      timestamp: PropTypes.string,
-      latitude: PropTypes.string,
-      longitude: PropTypes.string,
-    })).isRequired,
-  };
+  records: PropTypes.arrayOf(PropTypes.shape({
+    timestamp: PropTypes.string,
+    latitude: PropTypes.string,
+    longitude: PropTypes.string,
+  })).isRequired,
+};
 
 export default MapContainer;
