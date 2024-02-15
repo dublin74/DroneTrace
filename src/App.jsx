@@ -1,25 +1,20 @@
-import { useState } from 'react'
-import './App.css'
+import { useState } from 'react';
+import DroneInput from './components/DroneInput';
+import MapContainer from './components/MapContainer';
 
-function App() {
-  const [count, setCount] = useState(0)
+const App = () => {
+  const [records, setRecords] = useState([]);
+
+  const addRecord = (record) => {
+    setRecords([...records, record]);
+  };
 
   return (
-    <>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+    <div>
+      <DroneInput addRecord={addRecord} />
+      <MapContainer records={records} />
+    </div>
+  );
+};
 
-export default App
+export default App;
