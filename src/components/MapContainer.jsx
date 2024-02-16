@@ -50,7 +50,7 @@ const MapContainer = ({ records }) => {
             const nextTime = new Date(records[dronePathIndex.current].timestamp);
             const timeDifference = nextTime - currentTime; // in milliseconds
             // Adjusting the drone speed based on the distance and time difference - accounting for variable speed
-            droneSpeed.current = distance / timeDifference * 1000;  // in milliseconds
+            droneSpeed.current = distance / timeDifference ;  // in milliseconds
           }
         } else {
           clearInterval(droneMovement);
@@ -196,8 +196,8 @@ const MapContainer = ({ records }) => {
 MapContainer.propTypes = {
   records: PropTypes.arrayOf(PropTypes.shape({
     timestamp: PropTypes.string,
-    latitude: PropTypes.string,
-    longitude: PropTypes.string,
+    latitude: PropTypes.number,
+    longitude: PropTypes.number,
   })).isRequired,
 };
 

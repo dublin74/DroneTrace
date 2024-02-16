@@ -6,11 +6,11 @@ const App = () => {
   const [records, setRecords] = useState([]);
 
   const addRecord = (record) => {
-    setRecords([...records, record]);
+    setRecords((prevRecords) => [...prevRecords, record]);
   };
 
   return (
-    <div>
+    <div className='base'>
       <DroneInput addRecord={addRecord} />
       <MapContainer records={records} />
     </div>
