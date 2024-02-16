@@ -1,10 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
 import { GoogleMap, LoadScript, Marker, InfoWindow, Polyline } from '@react-google-maps/api';
+import { getDistance } from 'geolib';
 import PropTypes from 'prop-types';
 
 const containerStyle = {
   width: '100%',
-  height: '100vh'
+  height: '90vh'
 };
 
 const initialCenter = {
@@ -18,16 +19,63 @@ const MapContainer = ({ records }) => {
   const mapCenter = useRef(initialCenter);
   const mapZoom = useRef(10);
   const [directions, setDirections] = useState(null);
+  const [dronePosition, setDronePosition] = useState(null);
+  const [animationStatus, setAnimationStatus] = useState('stopped');
+  const droneSpeed = useRef(5); // for controlling the default speed of the drone - in milliseconds
+  const dronePathIndex = useRef(0);
 
   useEffect(() => {
-    if (map && records.length > 0) {
+    if (map && (records.length > 0 || dronePosition)) {
       const lastRecord = records[records.length - 1];
-      mapCenter.current = {
+      mapCenter.current = dronePosition || {
         lat: parseFloat(lastRecord.latitude),
         lng: parseFloat(lastRecord.longitude)
       };
     }
-  }, [map, records]);
+  }, [map, records, dronePosition]);
+
+  useEffect(() => {
+    if (animationStatus === 'playing' && directions) {
+      const dronePath = directions;
+      const droneMovement = setInterval(() => {
+        if (dronePath[dronePathIndex.current]) {
+          setDronePosition(dronePath[dronePathIndex.current]);
+          dronePathIndex.current++;
+          if (dronePathIndex.current < dronePath.length) {
+            const distance = getDistance(
+              { latitude: dronePath[dronePathIndex.current - 1].lat, longitude: dronePath[dronePathIndex.current - 1].lng },
+              { latitude: dronePath[dronePathIndex.current].lat, longitude: dronePath[dronePathIndex.current].lng }
+            ); // in meters
+            const currentTime = new Date(records[dronePathIndex.current - 1].timestamp);
+            const nextTime = new Date(records[dronePathIndex.current].timestamp);
+            const timeDifference = nextTime - currentTime; // in milliseconds
+            // Adjusting the drone speed based on the distance and time difference - accounting for variable speed
+            droneSpeed.current = distance / timeDifference * 1000;  // in milliseconds
+          }
+        } else {
+          clearInterval(droneMovement);
+          setAnimationStatus('stopped');
+        }
+      }, 1000 / droneSpeed.current);
+      return () => clearInterval(droneMovement);
+    }
+  }, [animationStatus, directions, records]);
+
+  const handlePlayClick = () => {
+    setAnimationStatus('playing');
+  };
+
+  const handlePauseClick = () => {
+    setAnimationStatus('paused');
+    droneSpeed.current = 5;
+  };
+
+  const handleResetClick = () => {
+    setAnimationStatus('stopped');
+    setDronePosition(null);
+    dronePathIndex.current = 0;
+    droneSpeed.current = 5; // Resetting to the initial default speed
+  };
 
   useEffect(() => {
     if (map && records.length > 1) {
@@ -129,7 +177,18 @@ const MapContainer = ({ records }) => {
             }}
           />
         )}
+        {dronePosition && <Marker position={dronePosition} label={{
+            text: "Drone-1",
+            color: "black",
+            fontWeight: "bold",
+            fontSize: "16px"
+          }} 
+          icon={{ url: 'https://maps.google.com/mapfiles/ms/icons/yellow-dot.png' }} 
+          />}
       </GoogleMap>
+      <button onClick={handlePlayClick}>Play</button>
+      <button onClick={handlePauseClick}>Pause</button>
+      <button onClick={handleResetClick}>Reset</button>
     </LoadScript>
   );
 };
