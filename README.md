@@ -13,9 +13,10 @@ This web application allows users to track the movement of a drone on a map by p
 ## Usage
 
 1. Clone the repository to your local machine `git clone https://github.com/dublin74/drone-sim-visualizer.git`.
-2. Install dependencies by running `npm install`.
-3. Start the development server with `npm run dev`.
-4. Open the application in your web browser at `http://localhost:3000`.
+2. Go to the repo folder `cd .\drone-sim-visualizer\`.
+3. Install dependencies by running `npm install`.
+4. Start the development server with `npm run dev`.
+5. Open the application in your web browser at `http://localhost:3000`.
 
 ## Technologies Used
 
@@ -26,7 +27,7 @@ This web application allows users to track the movement of a drone on a map by p
 
 ## Note
 
-You can click on any marker on the map and it will open up an info window showing the necessary details like starting marker(green), intermediate marker(blue) or destination marker(red). Additional information available such as the timestamp, latitude, and longitude coordinates for that marker in the info window.
+You can click on any marker on the map, and it will open up an info window showing the necessary details like the starting marker(green), intermediate marker(blue) or destination marker(red). Additional information is available, such as the timestamp, latitude, and longitude coordinates for that marker in the info window.
 
 You can change the default speed by changing the variable `droneSpeed` in `MapContainer.jsx`.
 
