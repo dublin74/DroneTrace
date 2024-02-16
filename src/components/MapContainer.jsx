@@ -129,7 +129,7 @@ const MapContainer = ({ records }) => {
   return (
     <div className='map-container'>
       <LoadScript
-      googleMapsApiKey={import.meta.env.VITE_API_KEY}
+      googleMapsApiKey="AIzaSyDwyjA5m4xTSQUl2CIRgpDIIWBrhLEePA0"
     >
       <GoogleMap
         mapContainerStyle={containerStyle}
