@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import DroneInput from './components/DroneInput';
 import MapContainer from './components/MapContainer';
+import './App.css';
 
 const App = () => {
   const [records, setRecords] = useState([]);

@@ -28,8 +28,8 @@ const DroneInput = ({ addRecord }) => {
   };
 
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
+    <div className='input-container'>
+      <form className='input-form' onSubmit={handleSubmit}>
         <input
           type="text"
           placeholder="Timestamp"

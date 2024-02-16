@@ -127,7 +127,8 @@ const MapContainer = ({ records }) => {
   };
 
   return (
-    <LoadScript
+    <div className='map-container'>
+      <LoadScript
       googleMapsApiKey={import.meta.env.VITE_API_KEY}
     >
       <GoogleMap
@@ -186,10 +187,13 @@ const MapContainer = ({ records }) => {
           icon={{ url: 'https://maps.google.com/mapfiles/ms/icons/yellow-dot.png' }} 
           />}
       </GoogleMap>
-      <button onClick={handlePlayClick}>Play</button>
-      <button onClick={handlePauseClick}>Pause</button>
-      <button onClick={handleResetClick}>Reset</button>
+      <div className='map-controls'>
+        <button onClick={handlePlayClick}>Play</button>
+        <button onClick={handlePauseClick}>Pause</button>
+        <button onClick={handleResetClick}>Reset</button>
+      </div>
     </LoadScript>
+    </div>
   );
 };
 
