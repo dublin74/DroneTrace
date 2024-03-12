@@ -5,23 +5,23 @@ import PropTypes from 'prop-types';
 
 const containerStyle = {
   width: '100%',
-  height: '90vh'
+  height: '80vh'
 };
 
 const initialCenter = {
-  lat: 18.5204, // Default Latitude of Pune, India
-  lng: 73.8567  // Default Longitude of Pune, India
-};
+  lat: 18.5204, 
+  lng: 73.8567  
+}
 
 const MapContainer = ({ records }) => {
   const [map, setMap] = useState(null);
   const [selectedRecord, setSelectedRecord] = useState(null);
   const mapCenter = useRef(initialCenter);
-  const mapZoom = useRef(10);
+  const mapZoom = useRef(5);
   const [directions, setDirections] = useState(null);
   const [dronePosition, setDronePosition] = useState(null);
   const [animationStatus, setAnimationStatus] = useState('stopped');
-  const droneSpeed = useRef(5); // for controlling the default speed of the drone - in milliseconds
+  const droneSpeed = useRef(15); // for controlling the default speed of the drone animation
   const dronePathIndex = useRef(0);
 
   useEffect(() => {
@@ -48,15 +48,15 @@ const MapContainer = ({ records }) => {
             ); // in meters
             const currentTime = new Date(records[dronePathIndex.current - 1].timestamp);
             const nextTime = new Date(records[dronePathIndex.current].timestamp);
-            const timeDifference = nextTime - currentTime; // in milliseconds
+            const timeDifference = nextTime - currentTime; 
             // Adjusting the drone speed based on the distance and time difference - accounting for variable speed
-            droneSpeed.current = distance / timeDifference ;  // in milliseconds
+            droneSpeed.current = distance / timeDifference ;  
           }
         } else {
           clearInterval(droneMovement);
           setAnimationStatus('stopped');
         }
-      }, 1000 / droneSpeed.current);
+      }, 10000 / droneSpeed.current);
       return () => clearInterval(droneMovement);
     }
   }, [animationStatus, directions, records]);
@@ -80,7 +80,7 @@ const MapContainer = ({ records }) => {
   useEffect(() => {
     if (map && records.length > 1) {
       const sortedRecords = [...records].sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
-      const bounds = new window.google.maps.LatLngBounds();
+      //const bounds = new window.google.maps.LatLngBounds();
       const directionsService = new window.google.maps.DirectionsService();
 
       const waypoints = sortedRecords.map(record => ({
@@ -129,7 +129,7 @@ const MapContainer = ({ records }) => {
   return (
     <div className='map-container'>
       <LoadScript
-      googleMapsApiKey="AIzaSyDwyjA5m4xTSQUl2CIRgpDIIWBrhLEePA0"
+      googleMapsApiKey={import.meta.env.VITE_API_KEY}
     >
       <GoogleMap
         mapContainerStyle={containerStyle}
@@ -145,6 +145,14 @@ const MapContainer = ({ records }) => {
           if (map) {
             mapZoom.current = map.getZoom();
           }
+        }}
+        options={{
+          streetViewControl: false,
+          mapTypeControl: false,
+          fullscreenControl: false,
+          rotateControl: false,
+          scaleControl: false,
+          zoomControl: false,
         }}
       >
         {records.map((record, index) => (

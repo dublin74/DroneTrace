@@ -12,8 +12,12 @@ const App = () => {
 
   return (
     <div className='base'>
-      <DroneInput addRecord={addRecord} />
-      <MapContainer records={records} />
+      <div className='drone-input'>
+        <DroneInput addRecord={addRecord} />
+      </div>
+      <div className='map-container'>
+        <MapContainer records={records} />
+      </div>
     </div>
   );
 };
